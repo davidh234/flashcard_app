@@ -3,12 +3,20 @@ public class homepage {
   final int HOMEPAGE = 0;
   final int LOAD = 1;
   final int CREATE = 2;
-  int screen = 0;
+  int screen;
 
   PFont large;
   PFont small;
+  
+  String title = "";
+  String desc = "";
+  boolean finished = false;
+  
+  flashCardList list;
+  flashCard current;
 
   public homepage(PFont large, PFont small) {
+    this.screen = 0;
     this.large = large;
     this.small = small;
   }
@@ -21,12 +29,12 @@ public class homepage {
       load_flashcards_user_input();
     }
     if(screen == CREATE) {
-      create_flashcards_user_input();
+      create_flashcards_user_input(false);
     }
   }
 
   void draw() {
-    if (screen == 0) {
+    if (screen == HOMEPAGE) {
       mainscreen();
     } else if (screen == LOAD) {
       load_flashcards();
@@ -42,8 +50,8 @@ public class homepage {
     
     //BUTTONS
     fill(225);
-    rect(200, 60, 300, 90, 5);
-    rect(190, 210, 325, 90, 5);
+    rect(200, 60, 300, 90, 5);      //load
+    rect(190, 210, 325, 90, 5);     //create
     
     //HEADINGS
     fill(0);
@@ -65,14 +73,14 @@ public class homepage {
 
     //INPUT
     fill(255);
-    rect(350, 75, 300, 50);
-    rect(350, 175, 300, 50);
+    rect(350, 75, 300, 50);    //title input
+    rect(350, 175, 300, 50);   //description input
 
     //BUTTONS
     textFont(small);
     fill(200);
-    rect(450, 300, 100, 50);
-    rect(600, 300, 100, 50);
+    rect(450, 300, 100, 50);    //next
+    rect(600, 300, 100, 50);    //finished
 
     //TEXT FOR BUTTONS
     fill(0);
@@ -82,19 +90,67 @@ public class homepage {
 
 
   void homepage_user_input() {
-    if (mouseX >= 190 && mouseX <= 190+325 && mouseY >= 210 && mouseY <= 210+90) {
+    if(click_button(190, 210, 325, 90)) {
       screen = CREATE;
+      list = new flashCardList();
+      current = new flashCard();
     }
-    if (mouseX >= 200 && mouseX <= 200+300 && mouseY >= 60 && mouseY <= 60 + 90) {
+    if(click_button(200, 60, 300, 90)) {
       screen = LOAD;
     }
   }
   
   void load_flashcards_user_input() {
     //TODO
+    
+    //CHECK DATA FILE
   }
   
-  void create_flashcards_user_input() {
-    //TODO
+  boolean keyPressed() {
+    char input = ' ';
+    if(keyPressed) {
+      if(keyCode == ENTER) {
+        create_flashcards_user_input(true);
+        return true;
+      }
+      input = key;
+      title = title + input;
+    }
+    create_flashcards_user_input(false);
+    return false;
   }
+  
+  void create_flashcards_user_input(boolean titleFinished) {
+    //TITLE INPUT
+      
+      //*** check for click on title or desc first *****
+     title = current.enterTitle(titleFinished);
+     
+     
+    //DESCRIPTION INPUT
+     desc = current.enterDescription(false);
+    
+    //NEXT BUTTON
+    if(click_button(450, 300, 100, 50)) { 
+      flashCard new_flashcard = new flashCard(title, desc);
+      list.add(new_flashcard);
+    }
+    
+    //FINISHED BUTTON
+      //CREATE DATA FILE IF NONE FOUND
+      //SAVE CONTENTS TO DATA FILE
+  }
+  
+  
+  //checks if an area on screen has been clicked. xpos and ypos refer to the top left corner of the button as an (x,y) co-ordinate.
+  boolean click_button(int xpos, int ypos, int button_width, int button_height) {
+    //if the mouse is within the given boundary return true, else false
+    if(mouseX >= xpos && mouseX <= (xpos + button_width) && mouseY >= ypos && mouseY <= (ypos + button_height)){
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  
 }

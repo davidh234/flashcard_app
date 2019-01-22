@@ -3,10 +3,6 @@ PFont small;
 boolean side = true;
 homepage hp;
 
-void keyPressed() {
-  side = !side;
-}
-
 void setup() {
   size(750, 400);
   background(255);
@@ -19,6 +15,13 @@ void setup() {
 //flashCard test = new flashCard("What is marketing?", "not too sure");
 void mouseClicked() {
   hp.mouseClicked();
+}
+
+void keyPressed() {
+  if(keyCode == ENTER) {
+    hp.create_flashcards_user_input(true);
+  }
+  hp.keyPressed();
 }
 void draw() {
   background(255);
