@@ -1,5 +1,5 @@
 public class homepage {
-  
+
   final int HOMEPAGE = 0;
   final int LOAD = 1;
   final int CREATE = 2;
@@ -7,11 +7,12 @@ public class homepage {
 
   PFont large;
   PFont small;
-  
+
   String title = "";
   String desc = "";
-  boolean finished = false;
-  
+  boolean titleActive = false;
+  boolean descActive = false;
+
   flashCardList list;
   flashCard current;
 
@@ -25,10 +26,10 @@ public class homepage {
     if (screen == HOMEPAGE) {
       homepage_user_input();
     }
-    if(screen == LOAD) {
+    if (screen == LOAD) {
       load_flashcards_user_input();
     }
-    if(screen == CREATE) {
+    if (screen == CREATE) {
       create_flashcards_user_input(false);
     }
   }
@@ -47,12 +48,12 @@ public class homepage {
     //TEXT SETTINGS
     textAlign(CENTER, CENTER);
     textFont(large);
-    
+
     //BUTTONS
     fill(225);
     rect(200, 60, 300, 90, 5);      //load
     rect(190, 210, 325, 90, 5);     //create
-    
+
     //HEADINGS
     fill(0);
     text("Load flash cards", 350, 100);
@@ -75,8 +76,15 @@ public class homepage {
     fill(255);
     rect(350, 75, 300, 50);    //title input
     rect(350, 175, 300, 50);   //description input
-
+    fill(0);
+    textAlign(LEFT);
+    textFont(medium);
+    text(title, 355, 115);  //text display of title
+    text(desc, 355, 215);   //text display of description
+    
+    
     //BUTTONS
+    textAlign(CENTER);
     textFont(small);
     fill(200);
     rect(450, 300, 100, 50);    //next
@@ -90,67 +98,99 @@ public class homepage {
 
 
   void homepage_user_input() {
-    if(click_button(190, 210, 325, 90)) {
+    if (click_button(190, 210, 325, 90)) {
       screen = CREATE;
       list = new flashCardList();
       current = new flashCard();
     }
-    if(click_button(200, 60, 300, 90)) {
+    if (click_button(200, 60, 300, 90)) {
       screen = LOAD;
     }
   }
-  
+
   void load_flashcards_user_input() {
     //TODO
-    
+
     //CHECK DATA FILE
   }
-  
-  boolean keyPressed() {
-    char input = ' ';
-    if(keyPressed) {
-      if(keyCode == ENTER) {
-        create_flashcards_user_input(true);
-        return true;
+
+  void keyPressed() {
+    char input;
+    if (keyPressed) {
+      if(titleActive) {
+         if(keyCode != BACKSPACE){
+           if(keyCode != SHIFT) {
+            input = key;
+            title = title + input;
+           }
+        } else {
+          if(title.length() > 0)
+            title = title.substring(0, title.length()-1);
+        }
       }
-      input = key;
-      title = title + input;
+      if(descActive) {
+        if(keyCode != BACKSPACE) {
+          if(keyCode != SHIFT){
+            input = key;
+            desc = desc + input; 
+          }
+        } else {
+          if(desc.length() > 0)
+            desc = desc.substring(0, desc.length()-1);
+        }
+      }
     }
-    create_flashcards_user_input(false);
-    return false;
   }
   
+  String updateTitle(char input) {
+    return title + input;
+  }
+  
+  String updateDescription(char input) {
+    return desc + input;
+  }
   void create_flashcards_user_input(boolean titleFinished) {
     //TITLE INPUT
-      
-      //*** check for click on title or desc first *****
-     title = current.enterTitle(titleFinished);
-     
-     
+    if (click_button(350, 75, 300, 50)) {
+      println("selected title");
+      titleActive = true;
+      descActive = false;
+    }
+
+
     //DESCRIPTION INPUT
-     desc = current.enterDescription(false);
-    
+    if (click_button(350, 175, 300, 50)) {
+      println("selected description");
+      descActive = true;
+      titleActive = false;
+    }
+
+
     //NEXT BUTTON
-    if(click_button(450, 300, 100, 50)) { 
+    if (click_button(450, 300, 100, 50)) { 
       flashCard new_flashcard = new flashCard(title, desc);
       list.add(new_flashcard);
+      title = "";
+      desc = "";
     }
-    
+
     //FINISHED BUTTON
+    if(click_button(600, 300, 100, 50)) {
+      list.toString();
+      //TODO
       //CREATE DATA FILE IF NONE FOUND
       //SAVE CONTENTS TO DATA FILE
+    }
   }
-  
-  
-  //checks if an area on screen has been clicked. xpos and ypos refer to the top left corner of the button as an (x,y) co-ordinate.
+
+
+  //checks if an area on screen has been clicked. use the values for the rect as the parameters.
   boolean click_button(int xpos, int ypos, int button_width, int button_height) {
     //if the mouse is within the given boundary return true, else false
-    if(mouseX >= xpos && mouseX <= (xpos + button_width) && mouseY >= ypos && mouseY <= (ypos + button_height)){
+    if (mouseX >= xpos && mouseX <= (xpos + button_width) && mouseY >= ypos && mouseY <= (ypos + button_height)) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
-  
 }

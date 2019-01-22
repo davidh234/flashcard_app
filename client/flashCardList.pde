@@ -2,6 +2,7 @@
 public class flashCardList {
   flashCard start = null;
   flashCard end = null;
+  int size =0;
   
    //add a new flashcard to the linked list, default position of the end of the list
    void add(flashCard card) {
@@ -13,6 +14,7 @@ public class flashCardList {
        card.prev = end;
        end = card;
      }
+     size++;
    }
    
    //remove the most recently added card from the list
@@ -22,6 +24,7 @@ public class flashCardList {
        prev.next = null;
        end = prev;
      }
+     size--;
    }
    
    //method override for adding a flashcard at a given position 'pos'
@@ -38,5 +41,18 @@ public class flashCardList {
    
    //given the starting nodes in two lists, join the two flashcards
    void unionLists(flashCard first, flashCard second) {}
+   
+   String toString() {
+     flashCard current = start;
+     int i=1;
+     while(current != null) {
+       println("card number " + i);
+       println("title: " + current.title);
+       println("description: " + current.description + "\n");
+       current = current.next;
+       i++;
+     }
+     return null;
+   }
 
 }

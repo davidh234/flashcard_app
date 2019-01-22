@@ -34,12 +34,7 @@ public class flashCard {
     }
   }
   String enterTitle(boolean finished) {
-    if(finished) {
-      return title;
-    } else {
-      println(title);
-    }  
-    return title;
+     return null;
   }
   
   String enterDescription(boolean finished) {

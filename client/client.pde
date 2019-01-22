@@ -1,4 +1,5 @@
 PFont large;
+PFont medium;
 PFont small;
 boolean side = true;
 homepage hp;
@@ -8,6 +9,7 @@ void setup() {
   background(255);
   
   large = createFont("Georgia", 40);
+  medium = createFont("Georgia", 28);
   small = createFont("Georgia", 18);
   hp = new homepage(large, small);
 }
