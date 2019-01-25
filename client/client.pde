@@ -7,7 +7,7 @@ homepage hp;
 void setup() {
   size(750, 400);
   background(255);
-  
+
   large = createFont("Georgia", 40);
   medium = createFont("Georgia", 28);
   small = createFont("Georgia", 18);
@@ -20,7 +20,7 @@ void mouseClicked() {
 }
 
 void keyPressed() {
-  if(keyCode == ENTER) {
+  if (keyCode == ENTER) {
     hp.create_flashcards_user_input(true);
   }
   hp.keyPressed();

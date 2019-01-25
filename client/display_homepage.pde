@@ -64,11 +64,16 @@ public class homepage {
     //read from file
   }
 
-  void create_flashcards() {
-    textAlign(CENTER, CENTER);
-    textFont(large);
+  //method responsible for displaying the create screen
+  void create_flashcards() {  
+    //AMOUNT OF CARDS
+    textFont(small);
+    textAlign(LEFT);
+    text("Number of cards: " + list.size, 25, 50);
 
     //HEADINGS
+    textAlign(CENTER, CENTER);
+    textFont(large);
     text("Title: ", 300, 100);
     text("Description: ", 240, 200);
 
@@ -77,12 +82,15 @@ public class homepage {
     rect(350, 75, 300, 50);    //title input
     rect(350, 175, 300, 50);   //description input
     fill(0);
+    
+    //INPUT TEXT DISPLAY
     textAlign(LEFT);
     textFont(medium);
-    text(title, 355, 115);  //text display of title
-    text(desc, 355, 215);   //text display of description
-    
-    
+    String titleDisplay = adjustTextDisplay(title, 22);
+    String descDisplay = adjustTextDisplay(desc, 22);    
+    text(titleDisplay, 355, 115);  //text display of title
+    text(descDisplay, 355, 215);   //text display of description
+
     //BUTTONS
     textAlign(CENTER);
     textFont(small);
@@ -107,6 +115,18 @@ public class homepage {
       screen = LOAD;
     }
   }
+  
+  //method for handling text longer than the input box size. Takes the string, and the number of chars to display
+  String adjustTextDisplay(String string, int k) {
+    int stringSize = string.length();
+    if(stringSize <= k){
+      return string;
+    } else {
+      int overflow = stringSize - k;
+      String newString = string.substring(overflow, string.length());
+      return newString;
+    }
+  }
 
   void load_flashcards_user_input() {
     //TODO
@@ -117,35 +137,35 @@ public class homepage {
   void keyPressed() {
     char input;
     if (keyPressed) {
-      if(titleActive) {
-         if(keyCode != BACKSPACE){
-           if(keyCode != SHIFT) {
+      if (titleActive) {
+        if (keyCode != BACKSPACE) {
+          if (key != CODED) { //check if key is a coded key such as tab, alt or ctrl
             input = key;
             title = title + input;
-           }
+          }
         } else {
-          if(title.length() > 0)
+          if (title.length() > 0)
             title = title.substring(0, title.length()-1);
         }
       }
-      if(descActive) {
-        if(keyCode != BACKSPACE) {
-          if(keyCode != SHIFT){
+      if (descActive) {
+        if (keyCode != BACKSPACE) {
+          if (key != CODED) {
             input = key;
-            desc = desc + input; 
+            desc = desc + input;
           }
         } else {
-          if(desc.length() > 0)
+          if (desc.length() > 0)
             desc = desc.substring(0, desc.length()-1);
         }
       }
     }
   }
-  
+
   String updateTitle(char input) {
     return title + input;
   }
-  
+
   String updateDescription(char input) {
     return desc + input;
   }
@@ -175,7 +195,7 @@ public class homepage {
     }
 
     //FINISHED BUTTON
-    if(click_button(600, 300, 100, 50)) {
+    if (click_button(600, 300, 100, 50)) {
       list.toString();
       //TODO
       //CREATE DATA FILE IF NONE FOUND
