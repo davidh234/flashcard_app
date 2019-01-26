@@ -10,16 +10,23 @@ public class homepage {
 
   String title = "";
   String desc = "";
+  String listName = "";
+  
   boolean titleActive = false;
   boolean descActive = false;
 
   flashCardList list;
   flashCard current;
+  
+  JSONObject output;
+  JSONArray cardsJSON;
+  int listCount;
 
-  public homepage(PFont large, PFont small) {
+  public homepage(PFont large, PFont small, int listCount) {
     this.screen = 0;
     this.large = large;
     this.small = small;
+    this.listCount = listCount;
   }
 
   void mouseClicked() {
@@ -60,8 +67,27 @@ public class homepage {
     text("Create flash cards", 350, 250);
   }
 
+  //reads any files from the 'data' folder and displays them on the load page to be selected                        <-- this method is being called repeatedly, just call once
   void load_flashcards() {
-    //read from file
+     File dir = new File(sketchPath("data"));
+     String[] files = dir.list();
+     JSONArray[] file = new JSONArray[files.length];
+     
+     //check if no files exist
+     if(files.length == 0) {  
+       textAlign(LEFT, LEFT);                                                                                      // <-- add back button to this page
+       textFont(small);
+       text("Looks like you haven't created any lists!", 200, 175);
+     } 
+     //some files exist.. print each one
+     else { 
+       for(int i =0; i < files.length; i++){
+         file[i] = loadJSONArray(files[i]);
+         fill(0);
+         textFont(medium);
+         text(files[i].substring(0,files[i].length()-5), 100, (50*i + 30));                                        // <-- fix display to be standardised
+       }
+     }
   }
 
   //method responsible for displaying the create screen
@@ -73,23 +99,28 @@ public class homepage {
 
     //HEADINGS
     textAlign(CENTER, CENTER);
+    textFont(medium);
+    text("List name: ", 275, 75);
     textFont(large);
-    text("Title: ", 300, 100);
-    text("Description: ", 240, 200);
+    text("Title: ", 300, 145);
+    text("Description: ", 240, 245);
 
     //INPUT
     fill(255);
-    rect(350, 75, 300, 50);    //title input
-    rect(350, 175, 300, 50);   //description input
+    rect(350, 50, 300, 50);    //card list name
+    rect(350, 125, 300, 50);    //title input
+    rect(350, 225, 300, 50);   //description input
     fill(0);
     
     //INPUT TEXT DISPLAY
     textAlign(LEFT);
     textFont(medium);
+    String listDisplay = adjustTextDisplay(listName, 22);
     String titleDisplay = adjustTextDisplay(title, 22);
     String descDisplay = adjustTextDisplay(desc, 22);    
-    text(titleDisplay, 355, 115);  //text display of title
-    text(descDisplay, 355, 215);   //text display of description
+    text(listDisplay, 355, 85);    //text display of list name
+    text(titleDisplay, 355, 160);  //text display of title
+    text(descDisplay, 355, 260);   //text display of description
 
     //BUTTONS
     textAlign(CENTER);
@@ -129,9 +160,7 @@ public class homepage {
   }
 
   void load_flashcards_user_input() {
-    //TODO
-
-    //CHECK DATA FILE
+     
   }
 
   void keyPressed() {
@@ -148,7 +177,7 @@ public class homepage {
             title = title.substring(0, title.length()-1);
         }
       }
-      if (descActive) {
+      else if (descActive) {
         if (keyCode != BACKSPACE) {
           if (key != CODED) {
             input = key;
@@ -157,6 +186,17 @@ public class homepage {
         } else {
           if (desc.length() > 0)
             desc = desc.substring(0, desc.length()-1);
+        }
+      }
+      else { //list name
+        if (keyCode != BACKSPACE) {
+          if (key != CODED) {
+            input = key;
+            listName = listName + input;
+          }
+        } else {
+          if (listName.length() > 0)
+            listName = listName.substring(0, listName.length()-1);
         }
       }
     }
@@ -170,8 +210,16 @@ public class homepage {
     return desc + input;
   }
   void create_flashcards_user_input(boolean titleFinished) {
+    
+    //LIST NAME INPUT
+    if (click_button(350, 50, 300, 50)) {
+      println("selected list name");
+      titleActive = false;
+      descActive = false;
+    }
+    
     //TITLE INPUT
-    if (click_button(350, 75, 300, 50)) {
+    if (click_button(350, 125, 300, 50)) {
       println("selected title");
       titleActive = true;
       descActive = false;
@@ -179,7 +227,7 @@ public class homepage {
 
 
     //DESCRIPTION INPUT
-    if (click_button(350, 175, 300, 50)) {
+    if (click_button(350, 225, 300, 50)) {
       println("selected description");
       descActive = true;
       titleActive = false;
@@ -196,10 +244,25 @@ public class homepage {
 
     //FINISHED BUTTON
     if (click_button(600, 300, 100, 50)) {
-      list.toString();
-      //TODO
-      //CREATE DATA FILE IF NONE FOUND
-      //SAVE CONTENTS TO DATA FILE
+      flashCard next;
+      cardsJSON = new JSONArray();
+      for(int k = 0; k < list.size; k++){
+        next = list.getCard(k);
+        if(next != null){
+          output = new JSONObject();
+          output.setString("title",next.title);
+          output.setString("description",next.description);
+          cardsJSON.setJSONObject(k, output);
+        }                                                     
+      }
+      if(!cardsJSON.isNull(0)){
+        if(listName == ""){
+          listName = "[NoName]";
+        }
+        saveJSONArray(cardsJSON, "data/"+ listName+ ".json");              //<-- should check for name conflict and adjust name to avoid over-writing
+        listName = "";
+      }
+      screen = HOMEPAGE; //return to homepage upon finishing
     }
   }
 

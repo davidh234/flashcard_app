@@ -4,6 +4,8 @@ PFont small;
 boolean side = true;
 homepage hp;
 
+int numberOfFlashCardLists;
+
 void setup() {
   size(750, 400);
   background(255);
@@ -11,7 +13,9 @@ void setup() {
   large = createFont("Georgia", 40);
   medium = createFont("Georgia", 28);
   small = createFont("Georgia", 18);
-  hp = new homepage(large, small);
+  
+  numberOfFlashCardLists = 0;                                                   //   <-- get the number from file and pass in each time this is loaded to avoid over writing
+  hp = new homepage(large, small, numberOfFlashCardLists);
 }
 
 //flashCard test = new flashCard("What is marketing?", "not too sure");

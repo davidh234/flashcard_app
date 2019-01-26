@@ -48,12 +48,27 @@ public class flashCardList {
     flashCard current = start;
     int i=1;
     while (current != null) {
-      println("\ncard number " + i);
+      println("card number " + i);
       println("title: " + current.title);
-      println("description: " + current.description + "\n");
+      println("description: " + current.description);
       current = current.next;
       i++;
     }
     return null;
+  }
+  
+  
+  flashCard getCard(int k) {
+    if(k <= size) {
+      flashCard current = start;
+      int i =0;
+      while(i != k && current.next != null) {
+        current = current.next;
+        i++;
+      }
+      return current;
+    }
+    else 
+      return null;
   }
 }
